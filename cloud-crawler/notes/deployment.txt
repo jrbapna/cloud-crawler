@@ -1,0 +1,35 @@
+Deployment: Follow this along with install.aws.rdoc and notes
+
+1) Deploy chef-server to EC2 (delete the current .chef folder)
+  - runs into a few errors specifically when uploading cookbooks - can ignore for now (but will have to fix later) 
+  - if you didn't delete the current .chef folder, if will create a .chef.bak folder (backup) and move the current content over
+  - to fix cookbooks, need to modify etc/chef_server/chef_server.rb (see below) then reupload all cookbooks
+          
+          ssh -i ~/.ssh/ec2-cc-chef.pem ubuntu@54.163.162.177
+
+          cd /etc/chef-server
+          sudo touch chef-server.rb
+          sudo vim chef-server.rb
+
+          server_name = "54.163.162.177"
+          api_fqdn server_name
+          nginx['url'] = "https://#{server_name}"
+          nginx['server_name'] = server_name
+          lb['fqdn'] = server_name
+          bookshelf['vip'] = server_name
+
+
+          quit vim
+          run: sudo chef-server-ctl reconfigure
+
+          back in console: knife cookbook upload -a
+
+
+  - once all this is done, can login to chef-server using user admin pass: ripelink (after you reset it)
+
+2) Deploy cloud-master ("CC_Master")
+  - uses configuration from chef-server
+    - if error "your validation client is not authorized...." occurs, 
+      open che-server web and delete client "CC-Master"
+      also delete all amazon EC2 instances 
+      possibly run knife node delete "CC-Master" (don't actually think this does anything if you did above 2)

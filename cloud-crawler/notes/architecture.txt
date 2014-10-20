@@ -1,0 +1,46 @@
+add it to the queue
+
+spawn a new worker and attach it to the queue
+
+
+
+Create and assign worker to most underutilized EC2 Instance
+
+If CPU utilization of EC2 worker fleet > 70%, instantiate new instance
+If CPU utilization of EC2 worker fleet < 10%, remove EC2 instance
+
+Always keep at least one instance
+
+Each worker will have 5 threads
+
+
+If Auto Scaling kills an EC2 instance that hasn't finishing processing a certain site, just run a cron job on 
+Master that automatically spawns new workers for queues that have zero active workers but still have jobs to run
+
+
+Or, only kill the instance once all of the jobs are done
+
+
+
+Every domain must have a count of links 
+
+
+
+
+
+
+when worker is done, let ripelink know
+
+(worker automatically kills itself)
+
+ripelink generates report, sends user email, cleans up redis
+
+user logs in and views all their links that are bad. they can then select which links they want to hide
+
+
+on redis, we keep track of bad links, destroy everything else
+
+
+
+
+

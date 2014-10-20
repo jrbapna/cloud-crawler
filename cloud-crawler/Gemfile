@@ -15,6 +15,6 @@ gem 'fog'
 
 gem 'pry'
 
-gem 'qless-threaded_worker', :path => "/Users/rahulbapna/sites/qless-threaded_worker"
+gem 'qless-threaded_worker', :git => "git://github.com/jrbapna/qless-threaded_worker.git"
 
 gemspec
