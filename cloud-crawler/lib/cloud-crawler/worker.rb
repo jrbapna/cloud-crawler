@@ -20,11 +20,16 @@
 #
 require 'qless'
 require 'qless/worker'
+require 'qless/threaded_worker'
+require 'qless/threaded_worker/manager'
+require 'qless/threaded_worker/signal_overlord'
 
 module CloudCrawler
   class Worker
     
     def self.run(opts={})      
+
+      ENV['CONCURRENCY'] = '5' # number of processor threads
       
       ENV['REDIS_URL']= "redis://#{opts[:qless_host]}:#{opts[:qless_port]}/#{opts[:qless_db]}"
       ENV['QUEUES'] = opts[:queue_name]
@@ -34,10 +39,48 @@ module CloudCrawler
       ENV['VERBOSE'] = opts[:verbose].to_s
       ENV['RUN_AS_SINGLE_PROCESS'] = opts[:single_process].to_s
 
-      Qless::Worker::start
+      # binding.pry
+      # Qless::ThreadedWorker::start
+      manager = Qless::ThreadedWorker::Manager.new
+      manager.async.start
+      # binding.pry
+
+      overlord = Qless::ThreadedWorker::SignalOverlord.new(manager)
+      overlord.start # blocking call
+
+
     end
     
   end  
 end
+
+
+
+
+
+
+
+# require 'qless'
+# require 'qless/worker'
+
+# module CloudCrawler
+#   class Worker
+    
+#     def self.run(opts={})      
+      
+#       ENV['REDIS_URL']= "redis://#{opts[:qless_host]}:#{opts[:qless_port]}/#{opts[:qless_db]}"
+#       ENV['QUEUES'] = opts[:queue_name]
+      
+#       ENV['JOB_RESERVER'] = opts[:job_reserver]
+#       ENV['INTERVAL'] = opts[:interval].to_s
+#       ENV['VERBOSE'] = opts[:verbose].to_s
+#       ENV['RUN_AS_SINGLE_PROCESS'] = opts[:single_process].to_s
+
+#       Qless::Worker::start
+#     end
+    
+#   end  
+# end
+
 
 

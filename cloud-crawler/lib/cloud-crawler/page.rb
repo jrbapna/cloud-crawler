@@ -69,6 +69,7 @@ module CloudCrawler
       @headers = params[:headers] || {}
       @headers['content-type'] ||= ['']
       @aliases = Array(params[:aka]).compact
+      #binding.pry
       @referer = params[:referer]
       @depth = params[:depth] || 0
       @redirect_to = to_absolute(params[:redirect_to])

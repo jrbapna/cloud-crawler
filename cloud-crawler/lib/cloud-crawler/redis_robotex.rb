@@ -18,22 +18,34 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #
-require 'logger'
+require 'redis'
+require 'cloud-crawler/redis_doc_store'
+require 'cloud-crawler/logger'
+require 'robotex'
 
 module CloudCrawler
-  
-  LOGGER =  Logger.new($stdout)
-  LOGGER.formatter = Logger::Formatter.new
+  class RedisRobotex < RedisDocStore
 
-  filestring = '/Users/rahulbapna/sites/cloud-crawler/cloud-crawler/logs/master.log'
-  File.delete(filestring)
-  MYLOGGER =  Logger.new(filestring)
-  MYLOGGER.formatter = Logger::Formatter.new
-  MYLOGGER.info "CRAWL BEGIN AT: #{Time.now}"
+    def post_initialize(opts)
+      @robotex = Robotex.new(opts[:user_agent])
+    end
+   
+    def allowed?(uri)
+      rkey = key_for uri
+      if has_key?(rkey)
+        @docs[rkey] == "true"
+      else
+        @docs[rkey] = @robotex.allowed?(uri)
+      end
+    end
 
-  filestring = '/Users/rahulbapna/sites/cloud-crawler/cloud-crawler/logs/errors.log'
-  File.delete(filestring)
-  ERRORS =  Logger.new(filestring)
-  ERRORS.formatter = Logger::Formatter.new
- 
+    def make_namespace
+      "#{@opts[:job_name]}:robots"
+    end
+
+    def key_for(uri)
+      uri.host.to_s # for keys like "jrbsilks.com:robots:secure.jrbsilks.com"
+    end
+    
+  end
 end

@@ -149,7 +149,7 @@ module CloudCrawler
       # add pages to bloomfilter only if store to s3 succeeds
       # if we discarded pages, then touch those kept in local cache
       LOGGER.info " marking #{@saved_urls.size} urls in bloomfilter"
-      @bloomfilter.visit_urls(@saved_urls)  
+      @bloomfilter.visit_urls(@saved_urls)
     end
     
  

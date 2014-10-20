@@ -25,6 +25,7 @@ require 'cloud-crawler/redis_url_bloomfilter'
 require 'cloud-crawler/dsl_core'
 require 'active_support/inflector'
 require 'active_support/core_ext'
+require 'pry'
 
 module CloudCrawler
   
@@ -40,6 +41,9 @@ module CloudCrawler
       @cc_master_q = Redis::Namespace.new("#{@namespace}:ccmq", :redis =>  qless_job.client.redis)
       
       @page_store = RedisPageStore.new(qless_job.client.redis,@opts)
+      @robotex_store = RedisRobotex.new(qless_job.client.redis,@opts)
+
+
       @bloomfilter = RedisUrlBloomfilter.new(qless_job.client.redis,@opts)
       @queue = qless_job.client.queues[@queue_name]   
       @depth_limit = @opts[:depth_limit]
@@ -70,12 +74,21 @@ module CloudCrawler
       LOGGER.info  "CrawlJob: setting up dsl id = #{dsl_id}"
       setup_dsl(dsl_id)  # or could just pass tghe damn blocks in
             
+
       data = qless_job.data.symbolize_keys
-      link, referer, depth = data[:link], data[:referer], data[:depth]     
-      return if link == :END     
+      link, referer, depth = data[:link], data[:referer], data[:depth]  
+      if link == "END"
+        qless_job.complete
+        MYLOGGER.info "CRAWL COMPLETED AT: #{Time.now}"
+        # / this wont run until you kill the worker
+        str = "redis.call('zrem', 'ql:workers', '"
+        str += qless_job.worker_name
+        str += "')"
+        Process.kill("QUIT",Qless.worker_name.split('.')[1].split('-')[1].to_i)
+        qless_job.client.redis.eval(str)
+      end
                   
       http = CloudCrawler::HTTP.new(@opts)
-      
       #TODO: implement DSL logic to use browser or not
       pages = if keep_redirects? then
           http.fetch_pages(link, referer, depth) 
@@ -86,25 +99,32 @@ module CloudCrawler
       
       pages.each do |page|
          url = page.url.to_s
-         next if @bloomfilter.visited_url?(url)
 
          do_page_blocks(page)
          
          links = links_to_follow(page)       
          links.each do |lnk|
-            # next if lnk.to_s==url  # avoid loop
             next if @bloomfilter.visited_url?(lnk)  
-            data[:link], data[:referer], data[:depth] =  lnk.to_s, page.referer.to_s, page.depth + 1 
+            data[:link], data[:referer], data[:depth] =  lnk.to_s, page.url.to_s, page.depth + 1 
             next if @depth_limit and data[:depth] > @depth_limit 
             @queue.put(CrawlJob, data)
+            @bloomfilter.visit_url(lnk)
+            MYLOGGER.info lnk.to_s
          end
          
          page.discard_doc! if @opts[:discard_page]
          @page_store[url] = page   
-         @bloomfilter.visit_url(url)
 
      end  
+
+     if @queue.length == 1
+       data[:link], data[:referer], data[:depth] =  :END, :END, 1
+       @queue.put(CrawlJob, data)
+     end
+
     end
+
+
    
   end
 

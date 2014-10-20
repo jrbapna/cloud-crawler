@@ -97,6 +97,7 @@ module CloudCrawler
 
     def include?(url)
       return true if disabled?
+      #binding.pry
       @bloomfilter.include?(key_for url)
     end
     alias_method :visited_url?, :include?

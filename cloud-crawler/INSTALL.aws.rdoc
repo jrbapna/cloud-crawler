@@ -49,12 +49,12 @@ Open these ports:
  export CHEF_AMI_ID='ami-d70c2892'
  export CHEF_USER='ubuntu'
  export CHEF_KEY='ec2-cc-chef'
- export CHEF_PEM='/home/ubuntu/.ssh/ec2-cc-chef.pem'
+ export CHEF_PEM='~/.ssh/ec2-cc-chef.pem'
  
- export EC2_AVAILABILITY_ZONE='us-west-1c'
- export EC2_REGION='us-west-1'
- export AWS_ACCESS_KEY_ID='AKIAIVVVWWW'
- export AWS_SECRET_ACCESS_KEY='EHHD+qmnOj90923JN9NMFWOh/FAQuiq'
+ export EC2_AVAILABILITY_ZONE='us-east-1c'
+ export EC2_REGION='us-east-1'
+ export AWS_ACCESS_KEY_ID='AKIAIYT3OSIAJ6L5JZAA'
+ export AWS_SECRET_ACCESS_KEY='iEjr0PtbLGnRDQiL7ExUOJQ2GaLlSXPkFwv0ZQl0'
 
 AWS_ACCESS_KEY_ID and AWS_SECRET_ACCESS_KEY are your master credentials for your AWS account (found in Security Credentials).
 

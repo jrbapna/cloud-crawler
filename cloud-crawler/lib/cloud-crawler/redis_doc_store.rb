@@ -44,6 +44,8 @@ module CloudCrawler
             
       @docs = Redis::Namespace.new(@namespace, :redis => redis)
       @docs.s3_init(opts)   
+
+      post_initialize(opts)
     end
 
     def close
@@ -133,6 +135,11 @@ module CloudCrawler
    
     def rget(rkey)
       JSON.parse(@docs[rkey])
+    end
+
+    # subclasses may override
+    def post_initialize(args)
+      nil
     end    
   
   end

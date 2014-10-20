@@ -30,6 +30,7 @@ require 'active_support/core_ext'
 require 'json'
 require 'sourcify'
 require 'qless'
+require 'pry'
 
 module CloudCrawler
   VERSION = '0.2';
@@ -230,8 +231,9 @@ module CloudCrawler
     # Convenience method to start a new crawl
     #
     def self.crawl(urls, opts = {}, &block)
+      #binding.pry
       msg = "crawl #{urls} "
-      msg += " with #{block.to_source}"  if block
+      # # msg += " with #{block.to_source}"  if block
       LOGGER.info msg
 
       LOGGER.info "no urls to crawl" if urls.nil? or urls.empty?

@@ -79,6 +79,10 @@ This should run the local unit tests, but they are probably all broken by now :P
 === 2. Load the first job into redis
 
  $ bundle exec ./examples/crossfit_crawl.rb
+
+
+sudo bundle exec examples/find_404s.rb -u http://www.charitable.org -n charitable.org -q charitable.org
+ 
   
 === 3. Run the worker job
   

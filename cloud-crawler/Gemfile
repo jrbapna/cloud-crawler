@@ -1,5 +1,7 @@
 source 'http://rubygems.org'
 
+ruby '1.9.3'
+
 gem 'redis-caches', :git=>"git://github.com/CalculatedContent/redis-caches.git"
 gem 'sourcify', :git=>"git://github.com/CalculatedContent/sourcify.git" 
 gem 'qless', :git=>"git://github.com/CalculatedContent/qless.git"
@@ -10,5 +12,9 @@ gem 'headless'
 gem 'selenium-webdriver'
 gem 'whenever'
 gem 'fog'
+
+gem 'pry'
+
+gem 'qless-threaded_worker', :path => "/Users/rahulbapna/sites/qless-threaded_worker"
 
 gemspec

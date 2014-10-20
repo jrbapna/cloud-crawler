@@ -96,6 +96,7 @@ module CloudCrawler
 
       def init(opts={}, &block)
         @opts = opts.reverse_merge! DEFAULT_OPTS
+        @opts[:original_hosts] = @opts[:urls].map{|url| URI(url).host}
 
         @focus_crawl_block = nil
         @on_every_page_block = nil

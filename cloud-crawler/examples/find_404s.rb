@@ -29,24 +29,44 @@ qurl = URI::encode("http://www.ebay.com/sch/&_nkw=digital+camera")
 
 opts = Trollop::options do
   opt :urls, "urls to crawl", :short => "-u", :multi => true,  :default => qurl
-  opt :job_name, "name of crawl", :short => "-n", :default => "find_404s" 
+  opt :job_name, "name of crawl", :short => "-n", :default => "find_404s"
+  opt :queue_name, "name of crawl queue", :short => "-q",  :default => "crawls"
 
-  opt :depth_limit, "limit the depth of the crawl", :short => "-l", :type => :int, :default => 1 
-  opt :discard_page_bodies, "discard page bodies after processing?",  :short => "-d", :default => true
+  opt :depth_limit, "limit the depth of the crawl", :short => "-l", :type => :int, :default => 50
+  opt :discard_page, "discard page bodies after processing?",  :short => "-d", :default => true
   opt :skip_query_strings, "skip any link with a query string? e.g. http://foo.com/?u=user ",  :short => "-Q", :default => false
+
+
+  opt :user_agent, "identify self as CloudCrawler/VERSION", :short => "-A", :default => "CloudCrawler"
+  opt :redirect_limit, "number of times HTTP redirects to be followed", :short => "-R", :default => 5
+  opt :accept_cookies, "accept cookies from the server and send them back?", :short => "-C",  :default => false
+  opt :read_timeout, "HTTP read timeout in seconds",  :short => "-T", :type => :int, :default => nil
+
+  opt :outside_domain, "allow links outside of the root domain", :short => "-U", :default => true
+  opt :inside_domain, "allow links inside of the root domain", :short => "-O", :default => true
+
 end
 
 
 # simple example of SEO tool
 # Find all the pages on the website that contain links to the 404s
 #  
+
 CloudCrawler::crawl(opts[:urls], opts)  do |cc|
+
+  CloudCrawler::ERRORS.info "-----------------------------------------------------------------"
+
   
- cc.on_every_page do |page|
-    if page.code == 404 then     
-      s3_cache["404url:#{page.url.to_s}"]=1
-      s3_cache["404ref:#{page.referer}:#{page.url.to_s}"]=1
+  cc.on_every_page do |page|
+    # if page.code >= 404 then     
+    #   s3_cache["404url:#{page.url.to_s}"]=1
+    #   s3_cache["404ref:#{page.referer}:#{page.url.to_s}"]=1
+    # end
+    #puts page.url.to_s
+    if page.code >= 404 then
+      ERRORS.info %Q(#{page.url.to_s} #{page.referer} #{page.depth})
     end
   end
+
 end
 

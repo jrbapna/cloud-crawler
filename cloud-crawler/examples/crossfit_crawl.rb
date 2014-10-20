@@ -29,11 +29,7 @@ CloudCrawler::crawl(opts[:urls], opts)  do |cc|
      puts page.url.to_s
    end
    
-  cc.focus_crawl do |page|
-    page.links.keep_if do |lnk| 
-       text_for(lnk) =~ /Level 1/i
-    end
-  end
+
 
   
   
