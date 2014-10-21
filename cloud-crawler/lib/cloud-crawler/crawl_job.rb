@@ -79,7 +79,7 @@ module CloudCrawler
       link, referer, depth = data[:link], data[:referer], data[:depth]  
       if link == "END"
         qless_job.complete
-        MYLOGGER.info "CRAWL COMPLETED AT: #{Time.now}"
+        #MYLOGGER.info "CRAWL COMPLETED AT: #{Time.now}"
         # / this wont run until you kill the worker
         str = "redis.call('zrem', 'ql:workers', '"
         str += qless_job.worker_name
@@ -109,7 +109,7 @@ module CloudCrawler
             next if @depth_limit and data[:depth] > @depth_limit 
             @queue.put(CrawlJob, data)
             @bloomfilter.visit_url(lnk)
-            MYLOGGER.info lnk.to_s
+            #MYLOGGER.info lnk.to_s
          end
          
          page.discard_doc! if @opts[:discard_page]
