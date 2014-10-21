@@ -24,7 +24,7 @@ require 'bundler/setup'
 require 'cloud-crawler'
 require 'trollop'
 require 'open-uri'
-
+require 'pry'
 
 qurl = URI::encode("http://www.ebay.com/sch/&_nkw=digital+camera")
 
@@ -57,6 +57,7 @@ CloudCrawler::crawl(opts[:urls], opts)  do |cc|
 
 
   cc.on_every_page do |page|
+    binding.pry
     # if page.code >= 404 then
     #   s3_cache["404url:#{page.url.to_s}"]=1
     #   s3_cache["404ref:#{page.referer}:#{page.url.to_s}"]=1
