@@ -62,12 +62,13 @@ CloudCrawler::crawl(opts[:urls], opts)  do |cc|
     # end
     #puts page.url.to_s
     Pusher.url = "http://347f85b1a103ce339037:b96d67da0bd891e5439f@api.pusherapp.com/apps/93459"
+    pusher_id = @opts[:original_hosts].first
     if page.code >= 404
-      Pusher['ripelink'].trigger('errors', {
+      Pusher[pusher_id].trigger('errors', {
         message: page.url.to_s
       })
     end
-    Pusher['ripelink'].trigger('current_link', {
+    Pusher[pusher_id].trigger('current_link', {
       message: page.url.to_s
     })
   end
