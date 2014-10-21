@@ -25,6 +25,7 @@ require 'cloud-crawler'
 require 'trollop'
 require 'open-uri'
 
+
 qurl = URI::encode("http://www.ebay.com/sch/&_nkw=digital+camera")
 
 opts = Trollop::options do
@@ -56,16 +57,20 @@ CloudCrawler::crawl(opts[:urls], opts)  do |cc|
 
   CloudCrawler::ERRORS.info "-----------------------------------------------------------------"
 
-  
   cc.on_every_page do |page|
-    # if page.code >= 404 then     
+    # if page.code >= 404 then
     #   s3_cache["404url:#{page.url.to_s}"]=1
     #   s3_cache["404ref:#{page.referer}:#{page.url.to_s}"]=1
     # end
     #puts page.url.to_s
     if page.code >= 404 then
       ERRORS.info %Q(#{page.url.to_s} #{page.referer} #{page.depth})
+
     end
+    Pusher.url = "http://347f85b1a103ce339037:b96d67da0bd891e5439f@api.pusherapp.com/apps/93459"
+    Pusher['ripelink'].trigger('current_link', {
+      message: page.url.to_s
+    })
   end
 
 end

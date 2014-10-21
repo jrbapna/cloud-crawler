@@ -4,7 +4,7 @@ ruby '1.9.3'
 
 gem 'redis-caches', :git=>"git://github.com/CalculatedContent/redis-caches.git"
 gem 'sourcify', :git=>"git://github.com/CalculatedContent/sourcify.git" 
-gem 'qless', :git=>"git://github.com/CalculatedContent/qless.git"
+gem 'qless', :git=>"git://github.com/jrbapna/qless.git", :branch=>'master'
 
 # helper scripts
 gem 'sinatra'
@@ -16,5 +16,7 @@ gem 'fog'
 gem 'pry'
 
 gem 'qless-threaded_worker', :git => "git://github.com/jrbapna/qless-threaded_worker.git"
+
+gem 'pusher'
 
 gemspec
