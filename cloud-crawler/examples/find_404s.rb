@@ -63,11 +63,12 @@ CloudCrawler::crawl(opts[:urls], opts)  do |cc|
     #   s3_cache["404ref:#{page.referer}:#{page.url.to_s}"]=1
     # end
     #puts page.url.to_s
-    if page.code >= 404 then
-      ERRORS.info %Q(#{page.url.to_s} #{page.referer} #{page.depth})
-
-    end
     Pusher.url = "http://347f85b1a103ce339037:b96d67da0bd891e5439f@api.pusherapp.com/apps/93459"
+    if page.code >= 404 then
+      Pusher['ripelink'].trigger('errors', {
+        message: page.url.to_s
+      })
+    end
     Pusher['ripelink'].trigger('current_link', {
       message: page.url.to_s
     })
