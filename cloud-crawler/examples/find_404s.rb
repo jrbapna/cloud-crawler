@@ -55,7 +55,6 @@ end
 
 CloudCrawler::crawl(opts[:urls], opts)  do |cc|
 
-  CloudCrawler::ERRORS.info "-----------------------------------------------------------------"
 
   cc.on_every_page do |page|
     # if page.code >= 404 then
