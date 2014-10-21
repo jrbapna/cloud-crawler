@@ -27,7 +27,7 @@ GIT
 
 GIT
   remote: git://github.com/jrbapna/qless.git
-  revision: 1254ad784ec2b6f6e235c9b219cb8c9fd23bf23b
+  revision: be8249dea1eff93bfde0935716e0fb9a72c50d57
   branch: master
   specs:
     qless (0.9.2)

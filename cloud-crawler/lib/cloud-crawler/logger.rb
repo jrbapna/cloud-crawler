@@ -25,15 +25,21 @@ module CloudCrawler
   LOGGER =  Logger.new($stdout)
   LOGGER.formatter = Logger::Formatter.new
 
-  filestring = '/Users/rahulbapna/sites/cloud-crawler/cloud-crawler/logs/master.log'
-  File.delete(filestring)
-  MYLOGGER =  Logger.new(filestring)
-  MYLOGGER.formatter = Logger::Formatter.new
-  MYLOGGER.info "CRAWL BEGIN AT: #{Time.now}"
+  # begin
 
-  filestring = '/Users/rahulbapna/sites/cloud-crawler/cloud-crawler/logs/errors.log'
-  File.delete(filestring)
-  ERRORS =  Logger.new(filestring)
-  ERRORS.formatter = Logger::Formatter.new
+  # filestring = '/Users/rahulbapna/sites/cloud-crawler/cloud-crawler/logs/master.log'
+  # File.delete(filestring)
+  # MYLOGGER =  Logger.new(filestring)
+  # MYLOGGER.formatter = Logger::Formatter.new
+  # MYLOGGER.info "CRAWL BEGIN AT: #{Time.now}"
+
+  # filestring = '/Users/rahulbapna/sites/cloud-crawler/cloud-crawler/logs/errors.log'
+  # File.delete(filestring)
+  # ERRORS =  Logger.new(filestring)
+  # ERRORS.formatter = Logger::Formatter.new
+
+  # catch
+  
+  # end
  
 end

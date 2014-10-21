@@ -46,7 +46,7 @@ http://localhost:5678
 
 Master server: 
 --------------------
-Qless Admin: 54.161.177.107:3456
+Qless Admin: http://54.161.177.107:5678/
 ssh -i ~/.ssh/ec2-cc-chef.pem ubuntu@54.161.177.107
 cd ~/cc/cloud-crawler/
 sudo bundle exec examples/find_404s.rb -u http://www.jrbsilks.com -m 100 -l 5000
