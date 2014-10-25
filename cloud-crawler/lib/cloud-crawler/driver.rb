@@ -103,6 +103,7 @@ module CloudCrawler
       @client = Qless::Client.new( :host => opts[:qless_host], :port => opts[:qless_port] )
       @queue = @client.queues[opts[:queue_name]]
       @client.config['heartbeat'] = opts[:timeout] || DEFAULT_HEARTBEAT_IN_SEC
+      @queue.max_concurrency = 5
       
       # same as client code base
       # perhaps should isolate somewhere
@@ -149,6 +150,8 @@ module CloudCrawler
       data[:dsl_id] = make_blocks   
       
       data[:link] = normalize_link( hsh[:url])
+      data[:referer] = "BEGIN"
+      data[:cookie] = {}
       data.reverse_merge!(hsh)
       
       LOGGER.info "keys on ccmq #{@cc_master_q.keys}"

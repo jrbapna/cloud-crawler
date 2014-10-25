@@ -24,6 +24,7 @@ require 'bundler/setup'
 require 'cloud-crawler'
 require 'trollop'
 require 'open-uri'
+require 'pry'
 
 qurl = URI::encode("http://www.ebay.com/sch/&_nkw=digital+camera")
 
@@ -39,7 +40,7 @@ opts = Trollop::options do
 
   opt :user_agent, "identify self as CloudCrawler/VERSION", :short => "-A", :default => "CloudCrawler"
   opt :redirect_limit, "number of times HTTP redirects to be followed", :short => "-R", :default => 5
-  opt :accept_cookies, "accept cookies from the server and send them back?", :short => "-C",  :default => false
+  opt :accept_cookies, "accept cookies from the server and send them back?", :short => "-C",  :default => true
   opt :read_timeout, "HTTP read timeout in seconds",  :short => "-T", :type => :int, :default => nil
 
   opt :outside_domain, "allow links outside of the root domain", :short => "-U", :default => true
@@ -55,12 +56,17 @@ end
 CloudCrawler::crawl(opts[:urls], opts)  do |cc|
 
 
+  # cc.before_crawl do |page_store|
+  #   #binding.pry
+  # end
+
   cc.on_every_page do |page|
     # if page.code >= 404 then
     #   s3_cache["404url:#{page.url.to_s}"]=1
     #   s3_cache["404ref:#{page.referer}:#{page.url.to_s}"]=1
     # end
-    #puts page.url.to_s
+    puts '----------------------------------------------------'
+    puts page.url.to_s
     Pusher.url = "http://347f85b1a103ce339037:b96d67da0bd891e5439f@api.pusherapp.com/apps/93459"
     pusher_id = @opts[:original_hosts].first
     if page.code >= 404

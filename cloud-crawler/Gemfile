@@ -15,8 +15,10 @@ gem 'fog'
 
 gem 'pry'
 
-gem 'qless-threaded_worker', :git => "git://github.com/jrbapna/qless-threaded_worker.git"
+#gem 'qless-threaded_worker', :git => "git://github.com/jrbapna/qless-threaded_worker.git", :branch=>'master'
 
 gem 'pusher'
+
+gem 'vegas'
 
 gemspec

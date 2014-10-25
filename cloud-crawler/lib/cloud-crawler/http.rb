@@ -41,7 +41,7 @@ module CloudCrawler
     def initialize(opts = {})
       @connections = {}
       @opts = opts
-      @cookie_store =  CookieStore.new(@opts[:cookies])
+      @cookie_store = CookieStore.new(@opts[:cookies]) unless !@cookie_store.blank?
     end
     
     
@@ -54,7 +54,7 @@ module CloudCrawler
     # Just gets the final destination page.
     # Does not retrun the redirects
     #
-    def fetch_page(url, referer = nil, depth = nil)
+    def fetch_page(url, referer = nil, depth = nil, cookie = {})
       puts "the url is #{url}"
       fetch_pages(url, referer, depth).last
     end
@@ -65,12 +65,12 @@ module CloudCrawler
     # including redirects
     #
     # TODO:  add id for root referer so cookies can be saved
-    def fetch_pages(url, referer = nil, depth = nil)
+    def fetch_pages(url, referer = nil, depth = nil, cookie = {})
       begin
         url = URI(url) unless url.is_a?(URI)
         pages = []
         
-        get(url, referer) do |response, code, location, redirect_to, response_time|
+        get(url, referer, cookie) do |response, code, location, redirect_to, response_time|
           pages << Page.new(location, :body => response.body.dup,
                                       :code => code,
                                       :headers => response.to_hash,
@@ -152,7 +152,7 @@ module CloudCrawler
     # Yields the response object, response code, and URI location
     # for each response.
     #
-    def get(url, referer = nil)
+    def get(url, referer = nil, cookie = {})
       limit = redirect_limit
       loc = url
       begin
@@ -160,7 +160,7 @@ module CloudCrawler
           # request url
           loc = url.merge(loc) if loc.relative?          
 
-          response, response_time = get_response(loc, referer)
+          response, response_time = get_response(loc, referer, cookie)
           code = Integer(response.code)
           redirect_to = response.is_a?(Net::HTTPRedirection) ? URI(response['location']).normalize : nil
           yield response, code, loc, redirect_to, response_time
@@ -171,14 +171,13 @@ module CloudCrawler
     #
     # Get an HTTPResponse for *url*, sending the appropriate User-Agent string
     #
-    def get_response(url, referer = nil)
+    def get_response(url, referer = nil, cookie = {})
       full_path = url.query.nil? ? url.path : "#{url.path}?#{url.query}"
       
       opts = {}
       opts['User-Agent'] = user_agent if user_agent
       opts['Referer'] = referer.to_s if referer
-      opts['Cookie'] =  @cookie_store.to_s unless @cookie_store.empty? || (!accept_cookies? && @opts[:cookies].nil?)
-      
+      opts['Cookie'] =  CookieStore.new(cookie).to_s #@cookie_store.to_s unless @cookie_store.empty? || (!accept_cookies? && @opts[:cookies].nil?)
       # LOGGER.info "getting cookie  as  #{@cookie_store.to_s} " 
 
       retries = 0
@@ -193,7 +192,7 @@ module CloudCrawler
         finish = Time.now()
         response_time = ((finish - start) * 1000).round
 
-        @cookie_store.merge!(response['Set-Cookie']) if accept_cookies?
+        @cookie_store.merge!(response['set-cookie']) if accept_cookies?
        # LOGGER.info "setting cookie to  #{@cookie_store} "
         if @opts[:headless]
             # Override the body with the javascript eval'd from the headless browser.

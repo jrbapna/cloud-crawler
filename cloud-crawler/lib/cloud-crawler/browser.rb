@@ -155,8 +155,8 @@ module CloudCrawler
         response = connection(url).request(req)
         finish = Time.now()
         response_time = ((finish - start) * 1000).round
-       
-        @cookie_store.merge!(response['Set-Cookie']) if accept_cookies?
+        
+        @cookie_store.merge!(response['set-cookie']) if accept_cookies?
        # LOGGER.info "setting cookie to  #{@cookie_store} "
         return response, response_time
       rescue Timeout::Error, Net::HTTPBadResponse, EOFError => e

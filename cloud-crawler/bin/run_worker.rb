@@ -39,6 +39,7 @@ opts = Trollop::options do
 
   # must be 1 or worker will break...also why we have batch jobs!
   opt :interval, "time delay interval", :short => "-i", :default => 1
+  opt :delay, "delay between each http request (not batch jobs)",  :short => "-d", :default => 1
   opt :job_reserver, "Ordered or RoundRobin", :short => "-r", :default => 'Ordered'
   opt :verbose, "verbos", :short => "-v", :default => true
 end

@@ -137,10 +137,10 @@ module CloudCrawler
         blocks = {}
         blocks[:focus_crawl_block] = block_to_source @focus_crawl_block
         blocks[:on_every_page_block] = block_to_source @on_every_page_block
-        blocks[:on_after_crawl_block] = block_to_source @after_crawl_block
-        blocks[:on_before_crawl_block] = block_to_source @before_crawl_block
-        blocks[:on_after_batch_block] = block_to_source @after_batch_block
-        blocks[:on_before_batch_block] = block_to_source @before_batch_block
+        blocks[:after_crawl_block] = block_to_source @after_crawl_block
+        blocks[:before_crawl_block] = block_to_source @before_crawl_block
+        blocks[:after_batch_block] = block_to_source @after_batch_block
+        blocks[:before_batch_block] = block_to_source @before_batch_block
 
         blocks[:skip_link_patterns] = @skip_link_patterns.compact
         blocks[:on_pages_like_blocks] = @on_pages_like_blocks.each{ |_,a|  a.compact.map!(&:to_source) }

@@ -65,18 +65,44 @@ module CloudCrawler
     end
     
     
-    
+    def self.time_in_milli(time_delay = 0)
+      (Time.now + time_delay).strftime('%Y%m%d%H%M%S%L').to_i
+    end
     
     def self.perform(qless_job)
+      # when testing stuff in this function make sure you remove the error catching in dsl_core (it's parent func)
+
+
       super(qless_job)
       init(qless_job)
+
+
+
+
+      #sleep(3)
+      # time_delay = 30 # seconds
+      # polite_time = @m_cache["time"].to_i || 0
+      # if polite_time > time_in_milli
+      #   data = qless_job.data.symbolize_keys
+      #   @queue.put(CrawlJob, data)
+      #   qless_job.cancel
+      #   delay(3)        
+      # end
+      # #binding.pry
+
+
+
+
       
       LOGGER.info  "CrawlJob: setting up dsl id = #{dsl_id}"
       setup_dsl(dsl_id)  # or could just pass tghe damn blocks in
             
 
       data = qless_job.data.symbolize_keys
-      link, referer, depth = data[:link], data[:referer], data[:depth]  
+      link, referer, depth, cookie = data[:link], data[:referer], data[:depth], data[:cookie]
+      if referer == "BEGIN"
+        do_before_crawl_blocks(@page_store)
+      end 
       if link == "END"
         qless_job.complete
         #MYLOGGER.info "CRAWL COMPLETED AT: #{Time.now}"
@@ -90,10 +116,12 @@ module CloudCrawler
                   
       http = CloudCrawler::HTTP.new(@opts)
       #TODO: implement DSL logic to use browser or not
+
+      # binding.pry if @queue.length > 1000
       pages = if keep_redirects? then
-          http.fetch_pages(link, referer, depth) 
+          http.fetch_pages(link, referer, depth, cookie) 
         else 
-          [ http.fetch_page(link, referer, depth) ]
+          [ http.fetch_page(link, referer, depth, cookie) ]
       end
       
       
@@ -105,7 +133,7 @@ module CloudCrawler
          links = links_to_follow(page)       
          links.each do |lnk|
             next if @bloomfilter.visited_url?(lnk)  
-            data[:link], data[:referer], data[:depth] =  lnk.to_s, page.url.to_s, page.depth + 1 
+            data[:link], data[:referer], data[:depth], data[:cookie] =  lnk.to_s, page.url.to_s, page.depth + 1, merge_cookie(page, data[:cookie])
             next if @depth_limit and data[:depth] > @depth_limit 
             @queue.put(CrawlJob, data)
             @bloomfilter.visit_url(lnk)
@@ -117,13 +145,23 @@ module CloudCrawler
 
      end  
 
-     if @queue.length == 1
-       data[:link], data[:referer], data[:depth] =  :END, :END, 1
-       @queue.put(CrawlJob, data)
-     end
+     # if @queue.length == 1
+     #   data[:link], data[:referer], data[:depth] =  :END, :END, 1
+     #   @queue.put(CrawlJob, data)
+     # end
+
+
+
+
+     # @m_cache["time"] = time_in_milli(time_delay)
+     #binding.pry if data[:cookie]
 
     end
 
+    def self.merge_cookie(page, old_cookies)
+      new_cookies = page.cookies 
+      new_cookies.merge! old_cookies # hash
+    end
 
    
   end

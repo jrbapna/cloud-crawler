@@ -24,6 +24,7 @@ require 'active_support/inflector'
 require 'active_support/core_ext'
 require 'cloud-crawler/logger'
 require 'cloud-crawler/dsl_common' 
+require 'time'
 
 #TODO: add and process do_json_blocks
 #      as part of batch_api
@@ -65,7 +66,6 @@ module CloudCrawler
         @data = qless_job.data.symbolize_keys
         # unzip data opts ... decompress includes JSON parse and symbolize_keys 
         @opts = decompress data[:opts]
-        
 
         @batch_id = @data[:batch_id]
         @job_id = @data[:job_id]
@@ -78,8 +78,8 @@ module CloudCrawler
         LOGGER.info "DslCore:perform  ids  #{@batch_id}  #{@job_id} #{@dsl_id}"
 
 
-      rescue => e
-        LOGGER.fatal e.backtrace
+      # rescue => e
+      #   LOGGER.fatal e.backtrace
       end
 
    
@@ -168,8 +168,15 @@ module CloudCrawler
       #
       # TODO: execute locally on workers as cleanup
       #
-      def do_after_crawl_blocks
-         instance_eval(@after_crawl_block).call(@page_store) if @after_crawl_block
+      def do_after_crawl_blocks(page_store)
+         instance_eval(@after_crawl_block).call(page_store) if @after_crawl_block
+      end
+
+      #
+      # TODO: execute locally on workers as cleanup
+      #
+      def do_before_crawl_blocks(page_store)
+         instance_eval(@before_crawl_block).call(page_store) if @before_crawl_block
       end
 
       #

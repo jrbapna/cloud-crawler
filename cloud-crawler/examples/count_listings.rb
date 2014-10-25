@@ -11,7 +11,8 @@ opts = Trollop::options do
   opt :urls, "urls to crawl", :short => "-u", :multi => true,  :default => qurl
   opt :job_name, "name of crawl", :short => "-n", :default => "count_listings"  # does not work yet
   opt :flush,  "", :short => "-f", :default => true
-  opt :batch_size, "", :short => "-m", :default => 10
+  opt :batch_size, "", :short => "-m", :default => 1
+  opt :queue_name, "name of crawl queue", :short => "-q",  :default => "crawls"
  
   opt :s3_bucket, "save intermediate results to s3 bucket",  :short => "-s", :type => :string, :default => "cc-examples"
   opt :keep_tmp_files, "save intermediate files to local dir", :short => "-t",  :type => :string, :default => nil
@@ -27,10 +28,13 @@ end
 #  
 CloudCrawler::batch_crawl(opts[:urls], opts)  do |cc|
   
-  cc.focus_crawl do |page|
-    page.select_links_by("//h4/a[@href]").each do |lnk|
-      puts "lnk -->  #{lnk}"
-    end
+  # cc.focus_crawl do |page|
+  #   # page.select_links_by("//h4/a[@href]").each do |lnk|
+  #   #   puts "lnk -->  #{lnk}"
+  #   # end
+  # end
+  cc.on_every_page do |page|
+    puts page.to_s
   end
   
 end

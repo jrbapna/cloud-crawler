@@ -18,41 +18,46 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #
-require 'qless'
-require 'qless/worker'
-require 'qless/threaded_worker'
-require 'qless/threaded_worker/manager'
-require 'qless/threaded_worker/signal_overlord'
 
-module CloudCrawler
-  class Worker
+
+
+
+
+# require 'qless'
+# require 'qless/worker'
+# require 'qless/threaded_worker'
+# require 'qless/threaded_worker/manager'
+# require 'qless/threaded_worker/signal_overlord'
+
+# module CloudCrawler
+#   class Worker
     
-    def self.run(opts={})      
+#     def self.run(opts={})      
 
-      ENV['CONCURRENCY'] = '5' # number of processor threads
+#       ENV['CONCURRENCY'] = '200' # number of processor threads
       
-      ENV['REDIS_URL']= "redis://#{opts[:qless_host]}:#{opts[:qless_port]}/#{opts[:qless_db]}"
-      ENV['QUEUES'] = opts[:queue_name]
+#       ENV['REDIS_URL']= "redis://#{opts[:qless_host]}:#{opts[:qless_port]}/#{opts[:qless_db]}"
+#       ENV['QUEUES'] = opts[:queue_name]
       
-      ENV['JOB_RESERVER'] = opts[:job_reserver]
-      ENV['INTERVAL'] = opts[:interval].to_s
-      ENV['VERBOSE'] = opts[:verbose].to_s
-      ENV['RUN_AS_SINGLE_PROCESS'] = opts[:single_process].to_s
+#       ENV['JOB_RESERVER'] = opts[:job_reserver]
+#       ENV['INTERVAL'] = opts[:interval].to_s
+#       ENV['VERBOSE'] = opts[:verbose].to_s
+#       ENV['RUN_AS_SINGLE_PROCESS'] = opts[:single_process].to_s
 
-      # binding.pry
-      # Qless::ThreadedWorker::start
-      manager = Qless::ThreadedWorker::Manager.new
-      manager.async.start
-      # binding.pry
+#       # binding.pry
+#       # Qless::ThreadedWorker::start
+#       manager = Qless::ThreadedWorker::Manager.new
+#       manager.async.start
+#       # binding.pry
 
-      overlord = Qless::ThreadedWorker::SignalOverlord.new(manager)
-      overlord.start # blocking call
+#       overlord = Qless::ThreadedWorker::SignalOverlord.new(manager)
+#       overlord.start # blocking call
 
 
-    end
+#     end
     
-  end  
-end
+#   end  
+# end
 
 
 
@@ -63,24 +68,33 @@ end
 # require 'qless'
 # require 'qless/worker'
 
-# module CloudCrawler
-#   class Worker
-    
-#     def self.run(opts={})      
-      
-#       ENV['REDIS_URL']= "redis://#{opts[:qless_host]}:#{opts[:qless_port]}/#{opts[:qless_db]}"
-#       ENV['QUEUES'] = opts[:queue_name]
-      
-#       ENV['JOB_RESERVER'] = opts[:job_reserver]
-#       ENV['INTERVAL'] = opts[:interval].to_s
-#       ENV['VERBOSE'] = opts[:verbose].to_s
-#       ENV['RUN_AS_SINGLE_PROCESS'] = opts[:single_process].to_s
+require 'qless/job_reservers/ordered'
+require 'qless/worker'
 
-#       Qless::Worker::start
-#     end
+module CloudCrawler
+  class Worker
     
-#   end  
-# end
+    def self.run(opts={})      
+      
+      ENV['REDIS_URL']= "redis://#{opts[:qless_host]}:#{opts[:qless_port]}/#{opts[:qless_db]}"
+      ENV['QUEUES'] = opts[:queue_name]
+      
+      ENV['JOB_RESERVER'] = opts[:job_reserver]
+      ENV['INTERVAL'] = opts[:interval].to_s
+      ENV['VERBOSE'] = opts[:verbose].to_s
+      ENV['RUN_AS_SINGLE_PROCESS'] = opts[:single_process].to_s
+
+
+      $qless = Qless::Client.new
+      queues = opts[:queue_name].split(',').map { |name| $qless.queues[name] }
+      job_reserver = Qless::JobReservers::Ordered.new(queues)
+      worker = Qless::Workers::ForkingWorker.new(job_reserver, :num_workers => 1, :interval => 1).run
+
+
+    end
+    
+  end  
+end
 
 
 

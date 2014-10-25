@@ -18,6 +18,7 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #
+
 require 'delegate'
 require 'webrick/cookie'
 require 'cloud-crawler/logger'
@@ -28,6 +29,8 @@ class WEBrick::Cookie
   end
 end
 
+
+#### Don't really use this class anymore? - see crawl_job.rb (simply storing cookie state in data[:cookie] )
 module CloudCrawler
   class CookieStore < DelegateClass(Hash)
 
