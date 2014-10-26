@@ -44,11 +44,9 @@
 #       ENV['VERBOSE'] = opts[:verbose].to_s
 #       ENV['RUN_AS_SINGLE_PROCESS'] = opts[:single_process].to_s
 
-#       # binding.pry
 #       # Qless::ThreadedWorker::start
 #       manager = Qless::ThreadedWorker::Manager.new
 #       manager.async.start
-#       # binding.pry
 
 #       overlord = Qless::ThreadedWorker::SignalOverlord.new(manager)
 #       overlord.start # blocking call

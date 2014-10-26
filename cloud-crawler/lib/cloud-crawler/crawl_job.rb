@@ -88,7 +88,6 @@ module CloudCrawler
       #   qless_job.cancel
       #   delay(3)        
       # end
-      # #binding.pry
 
 
 
@@ -99,7 +98,15 @@ module CloudCrawler
             
 
       data = qless_job.data.symbolize_keys
-      link, referer, depth, cookie = data[:link], data[:referer], data[:depth], data[:cookie]
+
+
+
+      @cookie_store = CookieStore.new(@opts[:cookies] || {})
+      @cookie_store.merge!(data[:cookies], false) unless data[:cookies].blank?
+
+
+
+      link, referer, depth = data[:link], data[:referer], data[:depth]
       if referer == "BEGIN"
         do_before_crawl_blocks(@page_store)
       end 
@@ -114,17 +121,17 @@ module CloudCrawler
         qless_job.client.redis.eval(str)
       end
                   
-      http = CloudCrawler::HTTP.new(@opts)
+      http = CloudCrawler::HTTP.new(@opts, @cookie_store)
       #TODO: implement DSL logic to use browser or not
 
-      # binding.pry if @queue.length > 1000
       pages = if keep_redirects? then
-          http.fetch_pages(link, referer, depth, cookie) 
+          http.fetch_pages(link, referer, depth) 
         else 
-          [ http.fetch_page(link, referer, depth, cookie) ]
+          [ http.fetch_page(link, referer, depth) ]
       end
       
-      
+      data[:cookies] = @cookie_store.to_s # after http.fetch_page is run, @cookie_store should update
+
       pages.each do |page|
          url = page.url.to_s
 
@@ -133,7 +140,7 @@ module CloudCrawler
          links = links_to_follow(page)       
          links.each do |lnk|
             next if @bloomfilter.visited_url?(lnk)  
-            data[:link], data[:referer], data[:depth], data[:cookie] =  lnk.to_s, page.url.to_s, page.depth + 1, merge_cookie(page, data[:cookie])
+            data[:link], data[:referer], data[:depth] =  lnk.to_s, page.url.to_s, page.depth + 1
             next if @depth_limit and data[:depth] > @depth_limit 
             @queue.put(CrawlJob, data)
             @bloomfilter.visit_url(lnk)
@@ -154,15 +161,8 @@ module CloudCrawler
 
 
      # @m_cache["time"] = time_in_milli(time_delay)
-     #binding.pry if data[:cookie]
 
     end
-
-    def self.merge_cookie(page, old_cookies)
-      new_cookies = page.cookies 
-      new_cookies.merge! old_cookies # hash
-    end
-
    
   end
 

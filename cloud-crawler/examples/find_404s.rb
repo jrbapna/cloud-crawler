@@ -57,7 +57,6 @@ CloudCrawler::crawl(opts[:urls], opts)  do |cc|
 
 
   # cc.before_crawl do |page_store|
-  #   #binding.pry
   # end
 
   cc.on_every_page do |page|

@@ -19,6 +19,7 @@
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #
 
+
 require 'delegate'
 require 'webrick/cookie'
 require 'cloud-crawler/logger'
@@ -30,7 +31,7 @@ class WEBrick::Cookie
 end
 
 
-#### Don't really use this class anymore? - see crawl_job.rb (simply storing cookie state in data[:cookie] )
+#### Don't really use this file anymore - see crawl_job.rb (simply storing cookie state in data[:cookie] )
 module CloudCrawler
   class CookieStore < DelegateClass(Hash)
 
@@ -40,11 +41,18 @@ module CloudCrawler
       super(@cookies)
     end
 
-    def merge!(set_cookie_str)
+    def merge!(cookie_str, type_set_cookies = true)
       begin
-        cookie_hash = WEBrick::Cookie.parse_set_cookies(set_cookie_str).inject({}) do |hash, cookie|
-          hash[cookie.name] = cookie if !!cookie
-          hash
+        if type_set_cookies
+          cookie_hash = WEBrick::Cookie.parse_set_cookies(cookie_str).inject({}) do |hash, cookie|
+            hash[cookie.name] = cookie if !!cookie
+            hash
+          end
+        else
+          cookie_hash = WEBrick::Cookie.parse(cookie_str).inject({}) do |hash, cookie|
+            hash[cookie.name] = cookie if !!cookie
+            hash
+          end
         end
         @cookies.merge! cookie_hash
       rescue

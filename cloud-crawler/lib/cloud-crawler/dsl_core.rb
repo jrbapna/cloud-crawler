@@ -199,9 +199,6 @@ module CloudCrawler
       def links_to_follow(page)
         @page = page  
         links = @focus_crawl_block ? instance_eval(@focus_crawl_block).call(page) : page.links
-        # links.each do |link|
-        #   if visit_link?(link,page) == false then binding.pry end
-        # end
         links.select { |link| visit_link?(link, page) }.map { |link| link.dup }
       end
       
@@ -244,7 +241,6 @@ module CloudCrawler
       # not obeying robots.txt.
       #
       def allowed(link)
-        #binding.pry
         @opts[:obey_robots_txt] ? @robotex_store.allowed?(link) : true
       rescue
         false
@@ -257,7 +253,6 @@ module CloudCrawler
         # if from_page.in_domain? link
         #   @opts[:inside_domain]
         # else
-          #binding.pry if (@opts[:outside_domain] && @opts[:original_hosts].include?(from_page.url.host) == false)
           @opts[:outside_domain] && @opts[:original_hosts].include?(from_page.url.host)
         #end
       end

@@ -30,6 +30,6 @@ Deployment: Follow this along with install.aws.rdoc and notes
 2) Deploy cloud-master ("CC_Master")
   - uses configuration from chef-server
     - if error "your validation client is not authorized...." occurs, 
-      open che-server web and delete client "CC-Master"
+      open chef-server web and delete client "CC-Master"
       also delete all amazon EC2 instances 
       possibly run knife node delete "CC-Master" (don't actually think this does anything if you did above 2)
