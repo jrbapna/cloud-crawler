@@ -105,20 +105,32 @@ module CloudCrawler
       @cookie_store.merge!(data[:cookies], false) unless data[:cookies].blank?
 
 
-
       link, referer, depth = data[:link], data[:referer], data[:depth]
       if referer == "BEGIN"
+        # bloomfilter
+        qless_job.client.redis.del("#{@opts[:job_name]}:bf")
+        
+        # crawl count
+        qless_job.client.redis.del("#{@opts[:job_name]}:crawl_count")
+        
         do_before_crawl_blocks(@page_store)
       end 
-      if link == "END"
-        qless_job.complete
-        #MYLOGGER.info "CRAWL COMPLETED AT: #{Time.now}"
-        # / this wont run until you kill the worker
-        str = "redis.call('zrem', 'ql:workers', '"
-        str += qless_job.worker_name
-        str += "')"
-        Process.kill("QUIT",Qless.worker_name.split('.')[1].split('-')[1].to_i)
-        qless_job.client.redis.eval(str)
+
+      @crawl_count = qless_job.client.redis.incr("#{@opts[:job_name]}:crawl_count")
+
+      if referer == "END" || @crawl_count.to_i >= 50000
+
+        # #MYLOGGER.info "CRAWL COMPLETED AT: #{Time.now}"
+        # # / this wont run until you kill the worker
+        # str = "redis.call('zrem', 'ql:workers', '"
+        # str += qless_job.worker_name
+        # str += "')"
+        # Process.kill("QUIT",Qless.worker_name.split('.')[1].split('-')[1].to_i)
+        # qless_job.client.redis.eval(str)
+        
+        # this script stops running, else it will error out.
+        qless_job.complete 
+        return
       end
                   
       http = CloudCrawler::HTTP.new(@opts, @cookie_store)
@@ -152,13 +164,11 @@ module CloudCrawler
 
      end  
 
-     # if @queue.length == 1
-     #   data[:link], data[:referer], data[:depth] =  :END, :END, 1
-     #   @queue.put(CrawlJob, data)
-     # end
-
-
-
+     # we're currently in this job, and even after parsing the pages there are no jobs waiting, so we must be done
+     if (@queue.counts["running"] == 1) && @queue.counts["waiting"] == 0
+       data[:link], data[:referer], data[:depth] =  :END, :END, 1
+       @queue.put(CrawlJob, data)
+     end
 
      # @m_cache["time"] = time_in_milli(time_delay)
 

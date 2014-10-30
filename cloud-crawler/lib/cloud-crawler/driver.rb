@@ -103,14 +103,14 @@ module CloudCrawler
       @client = Qless::Client.new( :host => opts[:qless_host], :port => opts[:qless_port] )
       @queue = @client.queues[opts[:queue_name]]
       @client.config['heartbeat'] = opts[:timeout] || DEFAULT_HEARTBEAT_IN_SEC
-      @queue.max_concurrency = 5
-      
+      @queue.max_concurrency = 3
+
       # same as client code base
       # perhaps should isolate somewhere
       namespace = opts[:job_name]
       LOGGER.info "initialzing driver for #{namespace}"
       @cc_master_q = Redis::Namespace.new("#{namespace}:ccmq", :redis =>  @client.redis)
-      
+
       yield self if block_given?
     end
     

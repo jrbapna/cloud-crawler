@@ -21,4 +21,6 @@ gem 'pusher'
 
 gem 'vegas'
 
+gem 'qmore'
+
 gemspec

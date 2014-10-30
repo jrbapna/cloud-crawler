@@ -34,9 +34,13 @@ Running Locally:
 --------------------
 bundle exec examples/find_404s.rb -u http://www.jrbsilks.com -n jrbsilks.com -q jrbsilks.com
 bundle exec ./bin/run_worker.rb -q jrbsilks.com
+bundle exec ./bin/run_worker.rb -q *
+bundle exec ./bin/run_worker.rb -q asdfdasf
 
 bundle exec examples/find_404s.rb -u http://www.charitable.org -n charitable.org -q charitable.org
 bundle exec ./bin/run_worker.rb -q charitable.org
+
+bundle exec examples/find_404s.rb -u http://www.fabricback.com -n fabricback.com -q fabricback.com
 
 bundle exec qless-web
 http://localhost:5678

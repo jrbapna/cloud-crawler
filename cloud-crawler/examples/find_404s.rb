@@ -56,7 +56,10 @@ end
 CloudCrawler::crawl(opts[:urls], opts)  do |cc|
 
 
+  # DATABASE_URL=$(heroku config:get DATABASE_URL -a ripelink) your_process
+
   # cc.before_crawl do |page_store|
+  #   binding.pry
   # end
 
   cc.on_every_page do |page|
@@ -64,6 +67,8 @@ CloudCrawler::crawl(opts[:urls], opts)  do |cc|
     #   s3_cache["404url:#{page.url.to_s}"]=1
     #   s3_cache["404ref:#{page.referer}:#{page.url.to_s}"]=1
     # end
+    
+
     puts '----------------------------------------------------'
     puts page.url.to_s
     Pusher.url = "http://347f85b1a103ce339037:b96d67da0bd891e5439f@api.pusherapp.com/apps/93459"
@@ -76,6 +81,15 @@ CloudCrawler::crawl(opts[:urls], opts)  do |cc|
     Pusher[pusher_id].trigger('current_link', {
       message: page.url.to_s
     })
+    
+
+
+
+    # # if page.code >= 404
+    #   ERRORS.info page.code.to_s + ' ' + page.url.to_s
+    # # end
+    
+
   end
 
 end

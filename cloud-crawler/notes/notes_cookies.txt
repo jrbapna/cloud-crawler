@@ -5,7 +5,7 @@ How Cookies currently work:
 3) In crawljob.rb http = CloudCrawler::HTTP.new(@opts, @cookie_store) sends in the current value of @cookie_store 
 so that when it pulls pages in http.fetch_page it actually modifies @cookie_store directly and also
 makes the HTTP request with the current cookie!
-4) Back in crawljob.rb we set data[:cookies] back to the updated current value of @cookie_store.to_s
+4) Back in crawljob.rb we set data[:cookies] back to the updated current value of @cookie_store.to_s. This ensures cookies are persisted across requests.
 
 
 To remember: 
@@ -20,6 +20,3 @@ Gotchas:
 A couple reasons: @cookie_store inherits from Hash so there is always some weirdness, and the data hash object might convert all of its values into a hash when submitting to redis (so it does somethign weird). The best is to just make data[:cookies] a string and then use Webbrick::Cookie.parse(string) to reconfigure the cookie
 
 2) Expanding on point 1, when you are debugging, ensure @cookie_store.class is always an instance of CloudCrawler::CookieStore and not an instance of Hash
-
-
-

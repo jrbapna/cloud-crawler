@@ -33,10 +33,10 @@ module CloudCrawler
   # MYLOGGER.formatter = Logger::Formatter.new
   # MYLOGGER.info "CRAWL BEGIN AT: #{Time.now}"
 
-  # filestring = '/Users/rahulbapna/sites/cloud-crawler/cloud-crawler/logs/errors.log'
-  # File.delete(filestring)
-  # ERRORS =  Logger.new(filestring)
-  # ERRORS.formatter = Logger::Formatter.new
+  filestring = '/Users/rahulbapna/sites/cloud-crawler/cloud-crawler/logs/errors.log'
+  #File.delete(filestring)
+  ERRORS =  Logger.new(filestring)
+  ERRORS.formatter = Logger::Formatter.new
 
   # catch
   

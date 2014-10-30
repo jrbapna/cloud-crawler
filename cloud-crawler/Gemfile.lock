@@ -102,6 +102,8 @@ GEM
       fog-core
       nokogiri (~> 1.5, >= 1.5.11)
     formatador (0.2.5)
+    gem_logger (0.2.0)
+      activesupport
     headless (1.0.2)
     hiredis (0.4.5)
     httparty (0.13.1)
@@ -131,6 +133,10 @@ GEM
       httpclient (~> 2.4)
       multi_json (~> 1.0)
       signature (~> 0.1.6)
+    qmore (0.7.0)
+      gem_logger
+      multi_json (~> 1.7)
+      qless (~> 0.9)
     rack (1.5.2)
     rack-protection (1.5.3)
       rack
@@ -194,6 +200,7 @@ DEPENDENCIES
   pry
   pusher
   qless!
+  qmore
   rake (>= 10.0.0)
   redis-caches!
   rspec (>= 2.12.0)

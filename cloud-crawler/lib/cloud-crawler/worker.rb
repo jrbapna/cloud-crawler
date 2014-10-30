@@ -68,6 +68,7 @@
 
 require 'qless/job_reservers/ordered'
 require 'qless/worker'
+require 'qmore'
 
 module CloudCrawler
   class Worker
@@ -75,19 +76,41 @@ module CloudCrawler
     def self.run(opts={})      
       
       ENV['REDIS_URL']= "redis://#{opts[:qless_host]}:#{opts[:qless_port]}/#{opts[:qless_db]}"
-      ENV['QUEUES'] = opts[:queue_name]
+      ENV['QUEUES'] = '@'
       
-      ENV['JOB_RESERVER'] = opts[:job_reserver]
+      ENV['JOB_RESERVER'] = 'QmoreReserver' #opts[:job_reserver]
       ENV['INTERVAL'] = opts[:interval].to_s
       ENV['VERBOSE'] = opts[:verbose].to_s
       ENV['RUN_AS_SINGLE_PROCESS'] = opts[:single_process].to_s
 
 
-      $qless = Qless::Client.new
-      queues = opts[:queue_name].split(',').map { |name| $qless.queues[name] }
-      job_reserver = Qless::JobReservers::Ordered.new(queues)
-      worker = Qless::Workers::ForkingWorker.new(job_reserver, :num_workers => 1, :interval => 1).run
 
+      $qless = Qless::Client.new
+
+
+
+      # queues = opts[:queue_name].split(',').map { |name| $qless.queues[name] }
+      # job_reserver = Qmore::Reservers::Strategies::Filtering.new(nil)
+
+      # binding.pry
+      
+      # worker = Qless::Workers::ForkingWorker.new(job_reserver, :num_workers => 1, :interval => 1).run
+
+
+      source = Qmore::Reservers::Strategies::Sources.direct(Qless::Client.new)
+      source2 = Qmore::Reservers::Strategies::Sources::Background.new(source, 0.1)
+      thread = source2.start # Start the update
+      #queues = source.collect(&:name)
+
+
+      # queues = Qmore.client.queues['*']
+      #job_reserver = Qmore::Reservers::Delegating.new(source) #.new(queues)  #Qless::JobReservers::Ordered.new(queues)
+
+      job_reserver = Qmore::Reservers::Default.new(source)
+
+      #binding.pry
+
+      worker = Qless::Workers::ForkingWorker.new(job_reserver, :num_workers => 1, :interval => 1).run
 
     end
     
