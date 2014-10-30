@@ -51,16 +51,16 @@ http://localhost:5678
 Master server: 
 --------------------
 Qless Admin: http://54.161.177.107:5678/
-ssh -i ~/.ssh/ec2-cc-chef.pem ubuntu@54.161.177.107
+ssh -i ~/.ssh/ec2-cc-chef.pem ubuntu@54.89.132.28
 cd ~/cc/cloud-crawler/
 sudo bundle exec examples/find_404s.rb -u http://www.jrbsilks.com -m 100 -l 5000
 
 
 Worker server:
 --------------------
-ssh -i ~/.ssh/ec2-cc-chef.pem ubuntu@54.204.253.205
+ssh -i ~/.ssh/ec2-cc-chef.pem ubuntu@54.163.110.10
 cd ~/cc/cloud-crawler/
-sudo bundle exec bin/run_worker.rb -h 54.161.177.107
+sudo bundle exec bin/run_worker.rb -h 54.89.132.28
 
 
 
