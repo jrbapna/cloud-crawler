@@ -42,8 +42,6 @@ opts = Trollop::options do
   opt :delay, "delay between each http request (not batch jobs)",  :short => "-d", :default => 1
   opt :job_reserver, "Ordered or RoundRobin", :short => "-r", :default => 'Ordered'
   opt :verbose, "verbos", :short => "-v", :default => true
-  opt :file, "file path to save output", :short => "-f", :default => "/home/ubuntu/cc/cloud-crawler/logs/worker.log", :type => :string
-
 end
 
 CloudCrawler::Worker.run(opts)

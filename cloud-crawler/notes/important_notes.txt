@@ -68,7 +68,7 @@ pgrep ruby
 
 ps aux | grep ruby # better
 
-kill -SIGTERM PID  # its okay if you have to ctr c out of it
+sudo kill -SIGTERM PID  # its okay if you have to ctr c out of it
 
 sudo reboot # to reboot the system
 
