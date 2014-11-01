@@ -22,9 +22,20 @@ require 'logger'
 
 module CloudCrawler
   
-  #LOGGER = Logger.new($stdout)
-  LOGGER = Logger.new("/dev/null")
-  LOGGER.formatter = Logger::Formatter.new
+  class NullLoger < Logger
+    def initialize(*args)
+    end
+
+    def add(*args, &block)
+    end
+  end
+
+  
+  # LOGGER = Logger.new($stdout)
+  # LOGGER.formatter = Loger::Formatter.new
+
+  LOGGER = NullLoger.new("/dev/null")
+  LOGGER.formatter = NullLoger::Formatter.new
 
   # begin
 
