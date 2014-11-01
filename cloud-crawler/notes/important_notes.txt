@@ -59,11 +59,16 @@ sudo bundle exec examples/find_404s.rb -u http://www.fabricback.com -n fabricbac
 Worker server:
 --------------------
 ssh -i ~/.ssh/ec2-cc-chef.pem ubuntu@54.163.110.10
-sudo bundle exec ~/cc/cloud-crawler/bin/run_worker.rb -h 54.89.132.28 &
+cd ~/cc/cloud-crawler/
+sudo bundle exec bin/run_worker.rb -h 54.89.132.28 &
 
 To see running processes: 
 
 pgrep ruby
+
+ps aux | grep ruby # better
+
+kill -SIGTERM PID  # its okay if you have to ctr c out of it
 
 sudo reboot # to reboot the system
 
