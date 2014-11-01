@@ -53,7 +53,7 @@ Master server:
 Qless Admin: http://54.161.177.107:5678/
 ssh -i ~/.ssh/ec2-cc-chef.pem ubuntu@54.89.132.28
 cd ~/cc/cloud-crawler/
-sudo bundle exec examples/find_404s.rb -u http://www.jrbsilks.com -m 100 -l 5000
+sudo bundle exec examples/find_404s.rb -u http://www.fabricback.com -n fabricback.com -q fabricback.com
 
 
 Worker server:
