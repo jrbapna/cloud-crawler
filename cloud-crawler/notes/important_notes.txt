@@ -50,17 +50,20 @@ http://localhost:5678
 
 Master server: 
 --------------------
-Qless Admin: http://54.161.177.107:5678/
-ssh -i ~/.ssh/ec2-cc-chef.pem ubuntu@54.89.132.28
+Qless Admin: http://54.205.131.195:5678/
+ssh -i ~/.ssh/ec2-cc-chef.pem ubuntu@54.204.104.33
 cd ~/cc/cloud-crawler/
 sudo bundle exec examples/find_404s.rb -u http://www.fabricback.com -n fabricback.com -q fabricback.com
 
 
 Worker server:
 --------------------
-ssh -i ~/.ssh/ec2-cc-chef.pem ubuntu@54.163.110.10
+ssh -i ~/.ssh/ec2-cc-chef.pem ubuntu@54.157.47.241
+use screen to run the process in the background: http://www.rackaid.com/blog/linux-screen-tutorial-and-how-to/
+screen
 cd ~/cc/cloud-crawler/
-sudo bundle exec bin/run_worker.rb -h 54.89.132.28 &
+sudo bundle exec bin/run_worker.rb -h 54.204.104.33
+then ctr a d to detach the screen
 
 To see running processes: 
 
