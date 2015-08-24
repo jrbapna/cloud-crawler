@@ -114,7 +114,7 @@ CloudCrawler::crawl(opts[:urls], opts)  do |cc|
       #   message: page.url.to_s
       # })
       Pusher[pusher_id].trigger('found_email', {
-        message: page.url.to_s + ';' + address
+        message:  address
       })
       
 
