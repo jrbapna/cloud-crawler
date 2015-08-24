@@ -69,18 +69,56 @@ CloudCrawler::crawl(opts[:urls], opts)  do |cc|
     # end
     
 
-    puts '----------------------------------------------------'
-    puts page.url.to_s
-    Pusher.url = "http://347f85b1a103ce339037:b96d67da0bd891e5439f@api.pusherapp.com/apps/93459"
-    pusher_id = @opts[:original_hosts].first
-    if page.code >= 404
-      Pusher[pusher_id].trigger('errors', {
-        message: page.url.to_s
+    # puts '----------------------------------------------------'
+    # puts page.url.to_s
+    # Pusher.url = "http://347f85b1a103ce339037:b96d67da0bd891e5439f@api.pusherapp.com/apps/93459"
+    # pusher_id = @opts[:original_hosts].first
+    # if page.code >= 404
+    #   Pusher[pusher_id].trigger('errors', {
+    #     message: page.url.to_s
+    #   })
+    # end
+    # Pusher[pusher_id].trigger('current_link', {
+    #   message: page.url.to_s
+    # })
+
+    page.body.scan(/[\w\d]+[\w\d.-]@[\w\d.-]+\.\w{2,6}/).each do |address|
+
+      # if Address.first(:email => address).nil?
+      #   page = Page.first_or_create(
+      #     { :url => crawled_page.url.to_s },
+      #     {
+      #       :site => site,
+      #       :created_at => Time.now
+      #     }
+      #   )
+
+      #   Address.create(
+      #     :email => address,
+      #     :site => site,
+      #     :page => page,
+      #     :created_at => Time.now
+      #   )
+
+      #   puts address
+      # end
+
+      puts '----------------------------------------------------'
+      puts page.url.to_s
+      Pusher.url = "http://347f85b1a103ce339037:b96d67da0bd891e5439f@api.pusherapp.com/apps/93459"
+      pusher_id = 'email_finder'
+      if page.code >= 404
+
+      end
+      # Pusher[pusher_id].trigger('errors', {
+      #   message: page.url.to_s
+      # })
+      Pusher[pusher_id].trigger('current_link', {
+        message: page.url.to_s + ';' + address
       })
+      
+
     end
-    Pusher[pusher_id].trigger('current_link', {
-      message: page.url.to_s
-    })
     
 
 
