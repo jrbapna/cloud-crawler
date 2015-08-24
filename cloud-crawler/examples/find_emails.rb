@@ -105,7 +105,7 @@ CloudCrawler::crawl(urls, opts)  do |cc|
       #   message: page.url.to_s
       # })
       Pusher[pusher_id].trigger('current_link', {
-        message: page.url.to_s + ';' + address
+        message: address
       })
       
 
