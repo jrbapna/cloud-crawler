@@ -113,7 +113,7 @@ CloudCrawler::crawl(opts[:urls], opts)  do |cc|
       # Pusher[pusher_id].trigger('errors', {
       #   message: page.url.to_s
       # })
-      Pusher[pusher_id].trigger('current_link', {
+      Pusher[pusher_id].trigger('found_email', {
         message: page.url.to_s + ';' + address
       })
       

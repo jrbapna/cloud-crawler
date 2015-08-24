@@ -118,7 +118,7 @@ module CloudCrawler
 
       @crawl_count = qless_job.client.redis.incr("#{@opts[:job_name]}:crawl_count")
 
-      if referer == "END" || @crawl_count.to_i >= 50000
+      if referer == "END" || @crawl_count.to_i >= 50
 
         # #MYLOGGER.info "CRAWL COMPLETED AT: #{Time.now}"
         # # / this wont run until you kill the worker
