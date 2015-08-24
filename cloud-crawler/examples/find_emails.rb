@@ -38297,7 +38297,7 @@ qurl = [
 
 
 opts = Trollop::options do
-  opt :urls, "urls to crawl", :short => "-u", :multi => true,  :default => qurl
+  opt :urls, "urls to crawl", :short => "-u", :multi => true,  :default => 'not using this option'
   opt :job_name, "name of crawl", :short => "-n", :default => "find_404s"
   opt :queue_name, "name of crawl queue", :short => "-q",  :default => "crawls"
 
@@ -38321,7 +38321,13 @@ end
 # Find all the pages on the website that contain links to the 404s
 #  
 
-CloudCrawler::crawl(opts[:urls], opts)  do |cc|
+urls = []
+qurl.each do |u|
+  urls << URI::encode(u)
+end
+
+
+CloudCrawler::crawl(urls, opts)  do |cc|
 
 
   # DATABASE_URL=$(heroku config:get DATABASE_URL -a ripelink) your_process
