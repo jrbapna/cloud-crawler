@@ -30,10 +30,10 @@ qurl = URI::encode("http://www.ebay.com/sch/&_nkw=digital+camera")
 
 opts = Trollop::options do
   opt :urls, "urls to crawl", :short => "-u", :multi => true,  :default => qurl
-  opt :job_name, "name of crawl", :short => "-n", :default => "find_404s"
+  opt :job_name, "name of crawl", :short => "-n", :default => "find_emails"
   opt :queue_name, "name of crawl queue", :short => "-q",  :default => "crawls"
 
-  opt :depth_limit, "limit the depth of the crawl", :short => "-l", :type => :int, :default => 50
+  opt :depth_limit, "limit the depth of the crawl", :short => "-l", :type => :int, :default => 5
   opt :discard_page, "discard page bodies after processing?",  :short => "-d", :default => true
   opt :skip_query_strings, "skip any link with a query string? e.g. http://foo.com/?u=user ",  :short => "-Q", :default => false
 
@@ -43,7 +43,7 @@ opts = Trollop::options do
   opt :accept_cookies, "accept cookies from the server and send them back?", :short => "-C",  :default => true
   opt :read_timeout, "HTTP read timeout in seconds",  :short => "-T", :type => :int, :default => nil
 
-  opt :outside_domain, "allow links outside of the root domain", :short => "-U", :default => true
+  opt :outside_domain, "allow links outside of the root domain", :short => "-U", :default => false
   opt :inside_domain, "allow links inside of the root domain", :short => "-O", :default => true
 
 end
